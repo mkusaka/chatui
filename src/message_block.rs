@@ -21,24 +21,22 @@ impl<'a> MessageBlock<'a> {
 
     pub fn render(&self, area: Rect) -> Vec<Span<'a>> {
         let mut spans = Vec::new();
-        
+
         let role_color = match self.message.role {
             Role::System => Color::Blue,
             Role::User => Color::Green,
             Role::Assistant => Color::Yellow,
         };
-        
+
         let role_prefix = match self.message.role {
             Role::System => "System: ",
             Role::User => "User: ",
             Role::Assistant => "Assistant: ",
         };
-        
+
         spans.push(Span::styled(
             role_prefix,
-            Style::default()
-                .fg(role_color)
-                .add_modifier(Modifier::BOLD)
+            Style::default().fg(role_color).add_modifier(Modifier::BOLD),
         ));
 
         let elements = parse_markdown(&self.message.content);
@@ -50,27 +48,24 @@ impl<'a> MessageBlock<'a> {
                 MarkdownElement::Header(text, level) => {
                     spans.push(Span::styled(
                         format!("{} {}", "#".repeat(level as usize), text),
-                        Style::default().add_modifier(Modifier::BOLD)
+                        Style::default().add_modifier(Modifier::BOLD),
                     ));
                 }
                 MarkdownElement::CodeBlock(lines, language) => {
                     spans.push(Span::raw("\n"));
                     spans.push(Span::styled(
                         format!("```{}\n", language),
-                        Style::default().fg(Color::DarkGray)
+                        Style::default().fg(Color::DarkGray),
                     ));
                     for line in lines {
                         spans.push(Span::raw(format!("{}\n", line)));
                     }
-                    spans.push(Span::styled(
-                        "```\n",
-                        Style::default().fg(Color::DarkGray)
-                    ));
+                    spans.push(Span::styled("```\n", Style::default().fg(Color::DarkGray)));
                 }
                 MarkdownElement::BlockQuote(text) => {
                     spans.push(Span::styled(
                         format!("> {}\n", text),
-                        Style::default().fg(Color::Gray)
+                        Style::default().fg(Color::Gray),
                     ));
                 }
                 MarkdownElement::List(text) => {
@@ -78,7 +73,7 @@ impl<'a> MessageBlock<'a> {
                 }
             }
         }
-        
+
         spans
     }
 }

@@ -19,7 +19,7 @@ pub fn parse_markdown(input: &str) -> Vec<MarkdownElement> {
     let ss = SyntaxSet::load_defaults_newlines();
     let ts = ThemeSet::load_defaults();
     let theme = &ts.themes["base16-ocean.dark"];
-    
+
     let mut in_code_block = false;
     let mut code_block_content = String::new();
     let mut current_language = String::new();
@@ -63,7 +63,10 @@ pub fn parse_markdown(input: &str) -> Vec<MarkdownElement> {
                         syntect::util::as_24_bit_terminal_escaped(&ranges[..], false)
                     })
                     .collect();
-                elements.push(MarkdownElement::CodeBlock(highlighted, current_language.clone()));
+                elements.push(MarkdownElement::CodeBlock(
+                    highlighted,
+                    current_language.clone(),
+                ));
             }
             Event::Start(Tag::BlockQuote) => {
                 if let Some(Event::Text(text)) = parser.next() {
