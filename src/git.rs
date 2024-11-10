@@ -24,11 +24,12 @@ impl RepoContext {
         })
     }
 
-    pub fn update_context(&mut self) -> Result<&str> {
-        // Return cache if less than 1 minute has passed
+    // 戻り値を所有権のある String に変更
+    pub fn update_context(&mut self) -> Result<String> {
+        // キャッシュをチェックして、有効な場合はクローンして返す
         if let Some(ref cached) = self.context_cache {
             if self.last_update.elapsed()?.as_secs() < 60 {
-                return Ok(cached);
+                return Ok(cached.clone());
             }
         }
 
@@ -58,19 +59,19 @@ impl RepoContext {
             }
 
             if let Ok(content) = fs::read_to_string(path) {
-                // Take first 1000 characters for preview
                 let preview = content.chars().take(1000).collect::<String>();
                 files_content.push(format!("File: {}\nPreview:\n{}\n---", path, preview));
             }
         }
 
         let context = files_content.join("\n");
-        self.context_cache = Some(context);
+        self.context_cache = Some(context.clone());
         self.last_update = std::time::SystemTime::now();
 
-        Ok(self.context_cache.as_ref().unwrap())
+        Ok(context)
     }
 
+    // 他のメソッドは変更なし
     pub fn is_binary_file(&self, path: &str) -> Result<bool> {
         const MAGIC_NUMBERS: &[(&[u8], &str)] = &[
             (b"\x89PNG\r\n\x1a\n", "PNG"),

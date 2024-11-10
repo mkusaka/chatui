@@ -30,7 +30,7 @@ impl App {
 
             // Initialize git context
             let mut repo_context = RepoContext::new(&repo_path)?;
-            state.repo_context = Some(repo_context.update_context()?.to_string());
+            state.repo_context = Some(repo_context.update_context()?);
 
             // Spawn chat handler
             let mut state_clone = state.clone();
@@ -140,7 +140,7 @@ impl App {
             KeyCode::Enter => {
                 if self.state.input.starts_with("update") {
                     let mut repo_context = RepoContext::new(&self.state.repo_path)?;
-                    self.state.repo_context = Some(repo_context.update_context()?.to_string());
+                    self.state.repo_context = Some(repo_context.update_context()?);
                     self.state.input.clear();
                     self.state.add_message(
                         "System".to_string(),
