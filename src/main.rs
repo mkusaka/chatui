@@ -118,24 +118,22 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>, mut app: App) -> R
                                 app.input.set_style(Style::default().fg(Color::White));
                             }
                             KeyCode::Enter => {
-                                if key.modifiers.contains(KeyModifiers::CONTROL) {
-                                    let content = app.input.lines().join("\n");
-                                    if !content.is_empty() {
-                                        app.messages.push(Message {
-                                            role: Role::User,
-                                            content,
-                                            is_editing: false,
-                                        });
-                                        app.input.select_all();
-                                        app.input.delete_char();
-                                        app.input.move_cursor(tui_textarea::CursorMove::End);
-                                    }
-                                } else {
-                                    app.input.insert_newline();
+                                let content = app.input.lines().join("\n");
+                                if !content.is_empty() {
+                                    app.messages.push(Message {
+                                        role: Role::User,
+                                        content,
+                                        is_editing: false,
+                                    });
+                                    app.input.select_all();
+                                    app.input.delete_char();
+                                    app.input.move_cursor(tui_textarea::CursorMove::End);
                                 }
                             }
                             KeyCode::Char(c) => {
-                                if key.modifiers.contains(KeyModifiers::CONTROL) {
+                                if c == 'n' && key.modifiers == KeyModifiers::ALT {
+                                    app.input.insert_newline();
+                                } else if key.modifiers.contains(KeyModifiers::CONTROL) {
                                     match c {
                                         'u' => { app.input.delete_line_by_head(); }
                                         'w' => { app.input.delete_word(); }
