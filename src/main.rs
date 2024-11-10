@@ -137,33 +137,31 @@ fn ui(f: &mut Frame, app: &App) {
         ])
         .split(f.size());
 
-    // Chat history area
+    // Chat history area with enhanced message blocks
     let messages: Vec<ListItem> = app
         .messages
         .iter()
         .enumerate()
         .map(|(i, m)| {
-            let role_prefix = match m.role {
-                Role::System => "System: ",
-                Role::User => "User: ",
-                Role::Assistant => "Assistant: ",
-            };
-            let style = if Some(i) == app.selected_index {
-                Style::default().bg(Color::DarkGray)
-            } else {
-                Style::default()
-            };
-            ListItem::new(format!("{}{}", role_prefix, m.content)).style(style)
+            let message_block = MessageBlock::new(m, Some(i) == app.selected_index);
+            let spans = message_block.render(chunks[0]);
+            ListItem::new(Spans::from(spans))
+                .style(if Some(i) == app.selected_index {
+                    Style::default().bg(Color::DarkGray)
+                } else {
+                    Style::default()
+                })
         })
         .collect();
 
     let messages = List::new(messages)
         .block(Block::default().title("Chat History").borders(Borders::ALL))
-        .highlight_style(Style::default().bg(Color::DarkGray));
+        .highlight_style(Style::default().bg(Color::DarkGray))
+        .wrap(true);
 
     f.render_widget(messages, chunks[0]);
 
-    // Input area
+    // Input area (unchanged)
     let input = Paragraph::new(app.input.as_str())
         .style(match app.mode {
             Mode::Insert => Style::default().fg(Color::Yellow),
