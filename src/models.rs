@@ -21,7 +21,7 @@ pub enum InputFocus {
     MessageEdit(usize), // Index of message being edited
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AppState {
     pub messages: Vec<Message>,
     pub input: String,

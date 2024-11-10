@@ -9,12 +9,12 @@ struct GeminiRequest {
     contents: Vec<GeminiContent>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct GeminiContent {
     parts: Vec<GeminiPart>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct GeminiPart {
     text: String,
 }

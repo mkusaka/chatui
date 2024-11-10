@@ -10,12 +10,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use ratatui::{
-    backend::CrosstermBackend,
-    widgets::ScrollbarState,
-    widgets::ListState,
-    Terminal,
-};
+use ratatui::{backend::CrosstermBackend, widgets::ListState, widgets::ScrollbarState, Terminal};
 use std::{io, path::PathBuf, time::Duration};
 use tokio::sync::mpsc;
 
@@ -51,7 +46,8 @@ impl App {
         // Add initial system message
         state.add_message(
             "System".to_string(),
-            "Welcome to ChatRepo! Repository context loaded. Type your questions about the code.".to_string(),
+            "Welcome to ChatRepo! Repository context loaded. Type your questions about the code."
+                .to_string(),
         );
 
         Ok(Self {
@@ -73,7 +69,14 @@ impl App {
 
         // Main event loop
         while !self.should_quit {
-            terminal.draw(|f| ui::render(f, &mut self.state, &mut self.scroll_state, &mut self.list_state))?;
+            terminal.draw(|f| {
+                ui::render(
+                    f,
+                    &mut self.state,
+                    &mut self.scroll_state,
+                    &mut self.list_state,
+                )
+            })?;
 
             if event::poll(Duration::from_millis(100))? {
                 if let Event::Key(key) = event::read()? {
@@ -176,7 +179,7 @@ impl App {
                 content: self.state.input.clone(),
                 timestamp: chrono::Utc::now(),
             };
-            
+
             self.chat_tx.send(message).await?;
             self.state.input.clear();
         }
@@ -189,10 +192,6 @@ impl Drop for App {
         // Ensure terminal is properly cleaned up even if app panics
         let _ = disable_raw_mode();
         let mut stdout = io::stdout();
-        let _ = execute!(
-            stdout,
-            LeaveAlternateScreen,
-            DisableMouseCapture
-        );
+        let _ = execute!(stdout, LeaveAlternateScreen, DisableMouseCapture);
     }
 }
