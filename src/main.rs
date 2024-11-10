@@ -1,9 +1,13 @@
+mod markdown;
+mod message_block;
+
 use anyhow::Result;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use message_block::MessageBlock;
 use ratatui::{prelude::*, widgets::*};
 use std::io::{self, Stdout};
 use unicode_width::UnicodeWidthStr;
@@ -51,17 +55,14 @@ impl App {
 }
 
 fn main() -> Result<()> {
-    // Setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout))?;
 
-    // Create app and run it
     let app = App::new();
     let res = run_app(&mut terminal, app);
 
-    // Restore terminal
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),
@@ -137,7 +138,6 @@ fn ui(f: &mut Frame, app: &App) {
         ])
         .split(f.size());
 
-    // Chat history area with enhanced message blocks
     let messages: Vec<ListItem> = app
         .messages
         .iter()
@@ -145,23 +145,23 @@ fn ui(f: &mut Frame, app: &App) {
         .map(|(i, m)| {
             let message_block = MessageBlock::new(m, Some(i) == app.selected_index);
             let spans = message_block.render(chunks[0]);
-            ListItem::new(Spans::from(spans))
-                .style(if Some(i) == app.selected_index {
+            let line = Line::from(spans);
+            ListItem::new(line).style(
+                if Some(i) == app.selected_index {
                     Style::default().bg(Color::DarkGray)
                 } else {
                     Style::default()
-                })
+                }
+            )
         })
         .collect();
 
     let messages = List::new(messages)
         .block(Block::default().title("Chat History").borders(Borders::ALL))
-        .highlight_style(Style::default().bg(Color::DarkGray))
-        .wrap(true);
+        .highlight_style(Style::default().bg(Color::DarkGray));
 
     f.render_widget(messages, chunks[0]);
 
-    // Input area (unchanged)
     let input = Paragraph::new(app.input.as_str())
         .style(match app.mode {
             Mode::Insert => Style::default().fg(Color::Yellow),

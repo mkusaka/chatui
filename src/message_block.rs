@@ -1,5 +1,10 @@
-use ratatui::layout::{Constraint, Direction, Layout, Rect};
-use ratatui::widgets::{Block, Borders, Paragraph, Wrap};
+use crate::markdown::{parse_markdown, MarkdownElement};
+use crate::{Message, Role};
+use ratatui::{
+    layout::Rect,
+    style::{Color, Modifier, Style},
+    text::Span,
+};
 
 pub struct MessageBlock<'a> {
     message: &'a Message,
@@ -17,7 +22,6 @@ impl<'a> MessageBlock<'a> {
     pub fn render(&self, area: Rect) -> Vec<Span<'a>> {
         let mut spans = Vec::new();
         
-        // Add role prefix with appropriate color
         let role_color = match self.message.role {
             Role::System => Color::Blue,
             Role::User => Color::Green,
@@ -37,7 +41,6 @@ impl<'a> MessageBlock<'a> {
                 .add_modifier(Modifier::BOLD)
         ));
 
-        // Parse and render markdown content
         let elements = parse_markdown(&self.message.content);
         for element in elements {
             match element {
@@ -57,7 +60,7 @@ impl<'a> MessageBlock<'a> {
                         Style::default().fg(Color::DarkGray)
                     ));
                     for line in lines {
-                        spans.push(Span::raw(line));
+                        spans.push(Span::raw(format!("{}\n", line)));
                     }
                     spans.push(Span::styled(
                         "```\n",

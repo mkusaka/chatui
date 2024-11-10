@@ -1,5 +1,4 @@
 use pulldown_cmark::{CodeBlockKind, Event, Parser, Tag};
-use ratatui::style::{Color, Modifier, Style};
 use syntect::easy::HighlightLines;
 use syntect::highlighting::ThemeSet;
 use syntect::parsing::SyntaxSet;
@@ -16,7 +15,7 @@ pub enum MarkdownElement {
 
 pub fn parse_markdown(input: &str) -> Vec<MarkdownElement> {
     let mut elements = Vec::new();
-    let parser = Parser::new(input);
+    let mut parser = Parser::new(input);
     let ss = SyntaxSet::load_defaults_newlines();
     let ts = ThemeSet::load_defaults();
     let theme = &ts.themes["base16-ocean.dark"];
@@ -25,11 +24,19 @@ pub fn parse_markdown(input: &str) -> Vec<MarkdownElement> {
     let mut code_block_content = String::new();
     let mut current_language = String::new();
 
-    for event in parser {
+    while let Some(event) = parser.next() {
         match event {
-            Event::Start(Tag::Heading(level)) => {
-                if let Some(Event::Text(text)) = parser.next() {
-                    elements.push(MarkdownElement::Header(text.to_string(), level as u32));
+            Event::Start(Tag::Heading(level, _, _)) => {
+                let mut text = String::new();
+                while let Some(event) = parser.next() {
+                    match event {
+                        Event::Text(t) => text.push_str(&t),
+                        Event::End(Tag::Heading(..)) => break,
+                        _ => {}
+                    }
+                }
+                if !text.is_empty() {
+                    elements.push(MarkdownElement::Header(text, level as u32));
                 }
             }
             Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(lang))) => {
