@@ -1,0 +1,54 @@
+{
+  "name": "chatui",
+  "version": "1.0.0",
+  "description": "LLM Chat TUI Application",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "chatui": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.tsx",
+    "dev": "tsx watch src/index.tsx",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "tui",
+    "chat",
+    "llm",
+    "ai"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ai-sdk/anthropic": "^0.0.56",
+    "@ai-sdk/google": "^0.0.55",
+    "@ai-sdk/openai": "^0.0.72",
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@google/generative-ai": "^0.21.0",
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "ai": "^3.4.33",
+    "clipboardy": "^4.0.0",
+    "highlight.js": "^11.10.0",
+    "ink": "^5.0.1",
+    "markdown-it": "^14.0.0",
+    "openai": "^4.71.1",
+    "react": "^18.3.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "uuid": "^9.0.1",
+    "vitest": "^2.1.4"
+  },
+  "devDependencies": {
+    "@inkjs/ui": "^2.0.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/highlight.js": "^10.1.0",
+    "@types/markdown-it": "^13.0.7",
+    "@types/uuid": "^9.0.8"
+  }
+}
