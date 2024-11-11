@@ -18,7 +18,7 @@ export interface AppState {
   clipboard: string | null;
 }
 
-export type LLMProvider = 'google' | 'anthropic' | 'openai';
+export type LLMProvider = 'google' | 'anthropic' | 'openai' | 'mock';
 
 export interface AppConfig {
   llmProvider: LLMProvider;

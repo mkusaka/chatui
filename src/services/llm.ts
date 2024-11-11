@@ -2,11 +2,13 @@ import { LLMProvider, Message } from '../types';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Anthropic } from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
+import { MockLLMService } from './mockLLM';
 
 export class LLMService {
   private googleAI?: GoogleGenerativeAI;
   private anthropic?: Anthropic;
   private openai?: OpenAI;
+  private mockLLM?: MockLLMService;
   private provider: LLMProvider;
   private apiKey: string;
 
@@ -27,6 +29,9 @@ export class LLMService {
       case 'openai':
         this.openai = new OpenAI({ apiKey: this.apiKey });
         break;
+      case 'mock':
+        this.mockLLM = new MockLLMService();
+        break;
     }
   }
 
@@ -39,6 +44,8 @@ export class LLMService {
           return await this.sendToAnthropic(messages);
         case 'openai':
           return await this.sendToOpenAI(messages);
+        case 'mock':
+          return await this.sendToMock(messages);
         default:
           throw new Error('Invalid provider');
       }
@@ -92,5 +99,10 @@ export class LLMService {
     });
 
     return response.choices[0].message.content || '';
+  }
+
+  private async sendToMock(messages: Message[]): Promise<string> {
+    if (!this.mockLLM) throw new Error('Mock LLM client not initialized');
+    return await this.mockLLM.generateResponse(messages);
   }
 }
