@@ -1,53 +1,53 @@
-import React from 'react';
-import { Box, Text } from 'ink';
+import React from "react";
+import { Box, Text } from "ink";
 
 interface InputBoxProps {
   value: string;
-  mode: 'normal' | 'insert' | 'command';
+  mode: "normal" | "insert" | "command";
   cursorPosition: number;
   placeholder?: string;
 }
 
-export const InputBox: React.FC<InputBoxProps> = ({ 
-  value, 
-  mode, 
+export const InputBox: React.FC<InputBoxProps> = ({
+  value,
+  mode,
   cursorPosition,
-  placeholder 
+  placeholder,
 }) => {
   const getBorderColor = () => {
     switch (mode) {
-      case 'insert':
-        return 'green';
-      case 'command':
-        return 'yellow';
+      case "insert":
+        return "green";
+      case "command":
+        return "yellow";
       default:
-        return 'white';
+        return "white";
     }
   };
 
   const getPrefix = () => {
     switch (mode) {
-      case 'command':
-        return ':';
-      case 'insert':
-        return '>';
+      case "command":
+        return ":";
+      case "insert":
+        return ">";
       default:
-        return '-';
+        return "-";
     }
   };
 
   // カーソルを含むテキストをレンダリング
   const renderTextWithCursor = () => {
-    if (!value && mode !== 'insert' && mode !== 'command') {
+    if (!value && mode !== "insert" && mode !== "command") {
       return (
         <Text color="gray" dimColor>
-          {placeholder || 'Type your message...'}
+          {placeholder || "Type your message..."}
         </Text>
       );
     }
 
-    if (mode === 'insert' || mode === 'command') {
-      const lines = value.split('\n');
+    if (mode === "insert" || mode === "command") {
+      const lines = value.split("\n");
       let currentPos = 0;
       let cursorLine = 0;
       let cursorPosInLine = cursorPosition;
@@ -68,7 +68,7 @@ export const InputBox: React.FC<InputBoxProps> = ({
           {lines.map((line, index) => {
             if (index === cursorLine) {
               const before = line.slice(0, cursorPosInLine);
-              const cursorChar = line[cursorPosInLine] || ' ';
+              const cursorChar = line[cursorPosInLine] || " ";
               const after = line.slice(cursorPosInLine + 1);
               return (
                 <Box key={index}>
@@ -78,7 +78,11 @@ export const InputBox: React.FC<InputBoxProps> = ({
                 </Box>
               );
             }
-            return <Box key={index}><Text>{line}</Text></Box>;
+            return (
+              <Box key={index}>
+                <Text>{line}</Text>
+              </Box>
+            );
           })}
         </Box>
       );
@@ -89,12 +93,12 @@ export const InputBox: React.FC<InputBoxProps> = ({
 
   const getModeHint = () => {
     switch (mode) {
-      case 'insert':
-        return 'Arrow keys to move cursor, Enter for new line, Esc to send message or exit insert mode';
-      case 'command':
-        return ':w to send message, :q to quit, Esc for normal mode';
+      case "insert":
+        return "Arrow keys to move cursor, Enter for new line, Esc to send message or exit insert mode";
+      case "command":
+        return ":w to send message, :q to quit, Esc for normal mode";
       default:
-        return 'Press i for insert mode, : for command mode';
+        return "Press i for insert mode, : for command mode";
     }
   };
 

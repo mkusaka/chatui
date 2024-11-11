@@ -68,32 +68,14 @@ export const handleInsertMode = (
     return;
   }
 
-  // Command/Ctrl + V でペースト
-  if ((key.meta || key.ctrl) && input === "v") {
-    try {
-      const clipboardText = clipboard.readSync();
-      setState((prev) => ({
-        ...prev,
-        currentInput:
-          prev.currentInput.slice(0, prev.cursorPosition) +
-          clipboardText +
-          prev.currentInput.slice(prev.cursorPosition),
-        cursorPosition: prev.cursorPosition + clipboardText.length,
-      }));
-    } catch (error) {
-      console.error("Failed to paste from clipboard:", error);
-    }
-    return;
-  }
-
   if (key.return) {
     setState((prev) => ({
       ...prev,
       currentInput:
-        prev.currentInput.slice(0, prev.cursorPosition) +
+        prev.currentInput.slice(0, state.cursorPosition) +
         "\n" +
-        prev.currentInput.slice(prev.cursorPosition),
-      cursorPosition: prev.cursorPosition + 1,
+        prev.currentInput.slice(state.cursorPosition),
+      cursorPosition: state.cursorPosition + 1,
     }));
     return;
   }
