@@ -90,7 +90,7 @@ export const InputBox: React.FC<InputBoxProps> = ({
   const getModeHint = () => {
     switch (mode) {
       case 'insert':
-        return 'Arrow keys to move cursor, Enter for new line, Esc for normal mode';
+        return 'Arrow keys to move cursor, Enter for new line, Esc to send message or exit insert mode';
       case 'command':
         return ':w to send message, :q to quit, Esc for normal mode';
       default:

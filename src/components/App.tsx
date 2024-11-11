@@ -110,7 +110,7 @@ export const App: React.FC = () => {
         handleNormalMode(input, key, state, setState);
         break;
       case 'insert':
-        handleInsertMode(input, key, state, setState);
+        handleInsertMode(input, key, state, setState, handleMessageSubmit);
         break;
       case 'command':
         handleCommandMode(input, key, state, setState, handleCommand);

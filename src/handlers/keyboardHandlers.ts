@@ -43,10 +43,15 @@ export const handleInsertMode = (
   input: string,
   key: any,
   state: AppState,
-  setState: React.Dispatch<React.SetStateAction<AppState>>
+  setState: React.Dispatch<React.SetStateAction<AppState>>,
+  onMessageSubmit?: (content: string) => Promise<void>
 ) => {
   if (key.escape) {
-    setState(prev => ({ ...prev, mode: 'normal' }));
+    if (state.currentInput.trim() && onMessageSubmit) {
+      onMessageSubmit(state.currentInput);
+    } else {
+      setState(prev => ({ ...prev, mode: 'normal' }));
+    }
     return;
   }
 
